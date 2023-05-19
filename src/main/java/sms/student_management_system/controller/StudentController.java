@@ -1,22 +1,24 @@
 package sms.student_management_system.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import sms.student_management_system.entity.Student;
+import sms.student_management_system.repository.FacultyRepository;
 import sms.student_management_system.service.StudentService;
 
 @Controller
+@RequiredArgsConstructor
 public class StudentController {
 
-    private StudentService studentService;
+    private final StudentService studentService;
 
-    public StudentController(StudentService studentService) {
-        this.studentService = studentService;
-    }
+    private final FacultyRepository facultyRepository;
 
     @GetMapping("/students")
     public String listStudents(Model model) {
@@ -28,11 +30,13 @@ public class StudentController {
     public String createStudentForm(Model model) {
         Student student = new Student();
         model.addAttribute("student", student);
+        model.addAttribute("faculties", facultyRepository.findAll());
         return "create_student";
     }
 
     @PostMapping("/students")
     public String saveStudent(@ModelAttribute("student") Student student){
+        System.out.println("here");
         studentService.saveStudent(student);
         return "redirect:/students";
     }
@@ -50,6 +54,9 @@ public class StudentController {
         existingStudent.setFirstName(student.getFirstName());
         existingStudent.setLastName(student.getLastName());
         existingStudent.setEmail(student.getEmail());
+        existingStudent.setEducationType(student.getEducationType());
+        existingStudent.setFaculty(student.getFaculty());
+        existingStudent.setYear(student.getYear());
 
         studentService.updateStudent(existingStudent);
         return "redirect:/students";

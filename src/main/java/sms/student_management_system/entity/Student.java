@@ -1,64 +1,41 @@
 package sms.student_management_system.entity;
 
+import lombok.*;
+import sms.student_management_system.entity.enums.EducationType;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "students")
+@Builder
+@AllArgsConstructor
+@Getter
+@Setter
+@RequiredArgsConstructor
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "email")
     private String email;
 
-    public Student() {
-    }
+    private String groupName;
 
-    public Student(String firstName, String lastName, String email) {
-        super();
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-    }
+    @Enumerated(EnumType.STRING)
+    private EducationType educationType;
 
-    public Long getId() {
-        return id;
-    }
+    private Integer year;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @ManyToOne
+    @JoinColumn(name = "facultyId")
+    Faculty faculty;
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
+    @ManyToOne
+    @JoinColumn(name = "qualificationId")
+    Qualification qualification;
 
 }

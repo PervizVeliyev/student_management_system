@@ -29,38 +29,139 @@
 <div class = "container">
     <div class = "row">
         <div class = "col-lg-6 col-md-6 col-sm-6 container justify-content-center card">
-            <h1 class = "text-center"> Create New Student </h1>
+            <h1 class = "text-center"> Tələbə yaradın </h1>
             <div class = "card-body">
                 <form th:action="@{/students}" th:object = "${student}" method="POST">
                     <div class = "form-group">
-                        <label> Student First Name </label>
+                        <label> Ad </label>
                         <input
                         type = "text"
                         name = "firstName"
                         th:field = "*{firstName}"
                         class = "form-control"
-                        placeholder="Enter Student First Name"/>
+                        placeholder="Ad daxil edin" required />
                     </div>
 
                     <div class = "form-group">
-                        <label> Student Last Name </label>
+                        <label> Soyad </label>
                         <input
                                 type = "text"
                                 name = "lastName"
                                 th:field = "*{lastName}"
                                 class = "form-control"
-                                placeholder="Enter Student Last Name"/>
+                                placeholder="Soyad daxil edin" required />
                     </div>
 
                     <div class = "form-group">
-                        <label> Student Email </label>
+                        <label> Elektron poçt </label>
                         <input
                                 type = "text"
                                 name = "email"
                                 th:field = "*{email}"
                                 class = "form-control"
-                                placeholder="Enter Student Email"/>
+                                placeholder="Elektron poçt daxil edin" required />
                     </div>
+
+                    <div class = "form-group">
+                        <label> Qəbul ili </label>
+                        <input
+                                type = "text"
+                                name = "entranceYear"
+                                th:field = "*{year}"
+                                class = "form-control"
+                                placeholder="Qəbul ilini daxil edin" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fakültə</label>
+                        <select name="faculty" class="form-control" id="facultySelect" required>
+                            <option value="">Seçim edin</option> <!-- Add a default option -->
+                            <option th:each="faculty : ${faculties}" th:value="${faculty.id}" th:text="${faculty.name}"></option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" >
+                        <label>İxtisas</label>
+                        <select name="qualification" class="form-control" id="qualificationSelect" required>
+                            <!-- Qualification options will be dynamically populated here -->
+                        </select>
+                    </div>
+
+                    <script>
+                        let facultySelect = document.getElementById('facultySelect');
+                        let qualificationSelect = document.getElementById('qualificationSelect');
+                        let faculties = [];
+
+                        // Function to update the qualification options based on the selected faculty
+                        function updateQualificationOptions() {
+                            let facultyId = parseInt(facultySelect.value, 10); // Convert to Long
+
+                            qualificationSelect.innerHTML = '';
+
+                            let selectedFaculty = faculties.find(function (faculty) {
+                                return faculty.id === facultyId.valueOf();
+                            });
+
+                            console.log(selectedFaculty);
+
+                            if (selectedFaculty) {
+                                selectedFaculty.qualifications.forEach(function (qualification) {
+                                    let option = document.createElement('option');
+                                    option.value = qualification.id.value;
+                                    option.text = qualification.name;
+                                    qualificationSelect.appendChild(option);
+                                });
+                            }
+                        }
+
+                        // Fetch the faculties data from the server
+                        function fetchFaculties() {
+                            let url = 'http://localhost:9022/faculty/all';
+
+
+                            fetch(url)
+                                .then(function (response) {
+                                    if (!response.ok) {
+                                        throw new Error('Error fetching faculties: ' + response.status);
+                                    }
+                                    return response.json();
+                                })
+                                .then(function (data) {
+                                    faculties = data;
+                                    updateQualificationOptions();
+                                })
+                                .catch(function (error) {
+                                    console.error(error);
+                                });
+                        }
+
+                        // Call the fetchFaculties function initially
+                        fetchFaculties();
+
+                        // Refresh the qualification options whenever the faculty selection changes
+                        facultySelect.addEventListener('change', function () {
+                            updateQualificationOptions();
+                        });
+                    </script>
+
+                    <div class="form-group">
+                        <label>Tip</label>
+                        <select name="educationType" class="form-control" required>
+                            <option th:each="type : ${T(sms.student_management_system.entity.enums.EducationType).values()}"
+                                    th:value="${type}" th:text="${type.getDisplayName()}"></option>
+                        </select>
+                    </div>
+
+                    <div class = "form-group">
+                        <label>Qrup</label>
+                        <input
+                                type = "text"
+                                name = "group"
+                                th:field = "*{groupName}"
+                                class = "form-control"
+                                placeholder="Qrupu daxil edin" required />
+                    </div>
+
                     <div class = "box-footer">
                         <button type ="submit" class = "btn btn-primary">
                             Submit
