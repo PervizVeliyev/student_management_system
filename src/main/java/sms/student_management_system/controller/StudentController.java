@@ -36,13 +36,13 @@ public class StudentController {
 
     @PostMapping("/students")
     public String saveStudent(@ModelAttribute("student") Student student){
-        System.out.println("here");
         studentService.saveStudent(student);
         return "redirect:/students";
     }
 
     @GetMapping("/students/edit/{id}")
     public String editStudentForm(@PathVariable Long id, Model model){
+        model.addAttribute("faculties", facultyRepository.findAll());
         model.addAttribute("student", studentService.getStudentById(id));
         return "edit_student";
     }
@@ -56,6 +56,7 @@ public class StudentController {
         existingStudent.setEmail(student.getEmail());
         existingStudent.setEducationType(student.getEducationType());
         existingStudent.setFaculty(student.getFaculty());
+        existingStudent.setQualification(student.getQualification());
         existingStudent.setYear(student.getYear());
 
         studentService.updateStudent(existingStudent);

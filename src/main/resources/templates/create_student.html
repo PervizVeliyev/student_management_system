@@ -80,7 +80,8 @@
                         </select>
                     </div>
 
-                    <div class="form-group" >
+
+                    <div class="form-group">
                         <label>İxtisas</label>
                         <select name="qualification" class="form-control" id="qualificationSelect" required>
                             <!-- Qualification options will be dynamically populated here -->
@@ -99,25 +100,27 @@
                             qualificationSelect.innerHTML = '';
 
                             let selectedFaculty = faculties.find(function (faculty) {
-                                return faculty.id === facultyId.valueOf();
+                                return faculty.id === facultyId;
                             });
 
-                            console.log(selectedFaculty);
-
-                            if (selectedFaculty) {
+                            if (selectedFaculty && selectedFaculty.qualifications) {
                                 selectedFaculty.qualifications.forEach(function (qualification) {
                                     let option = document.createElement('option');
-                                    option.value = qualification.id.value;
+                                    option.value = qualification.id;
                                     option.text = qualification.name;
                                     qualificationSelect.appendChild(option);
                                 });
+                            } else {
+                                let defaultOption = document.createElement('option');
+                                defaultOption.value = '';
+                                defaultOption.text = 'Seçim edin';
+                                qualificationSelect.appendChild(defaultOption);
                             }
                         }
 
                         // Fetch the faculties data from the server
                         function fetchFaculties() {
                             let url = 'http://localhost:9022/faculty/all';
-
 
                             fetch(url)
                                 .then(function (response) {
@@ -164,7 +167,7 @@
 
                     <div class = "box-footer">
                         <button type ="submit" class = "btn btn-primary">
-                            Submit
+                            Təsdiqlə
                         </button>
                     </div>
                 </form>
